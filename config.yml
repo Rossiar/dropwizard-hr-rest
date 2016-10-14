@@ -1,0 +1,10 @@
+logging:
+  level: INFO
+  loggers:
+    com.hr: DEBUG
+
+database:
+  driverClass: "com.mysql.cj.jdbc.Driver"
+  url: "jdbc:mysql://your-database-host/your-database-name"
+  user: "your-database-user"
+  password: "your-database-password"
