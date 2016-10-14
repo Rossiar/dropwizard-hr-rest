@@ -8,3 +8,6 @@ database:
   url: "jdbc:mysql://your-database-host/your-database-name"
   user: "your-database-user"
   password: "your-database-password"
+
+# Customise the size of pages used in the pagination of data returned from the endpoints
+page-size: 500

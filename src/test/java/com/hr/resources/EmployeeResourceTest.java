@@ -9,6 +9,7 @@ import org.junit.After;
 import org.junit.ClassRule;
 import org.junit.Test;
 
+import javax.ws.rs.core.Response;
 import java.time.LocalDate;
 import java.time.Month;
 import java.util.ArrayList;
@@ -18,20 +19,69 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.*;
 
 /**
- * Created by hendersonra on 10/10/16.
+ * Tests for {@link EmployeeResource}
  */
 public class EmployeeResourceTest {
 
     public static final EmployeeDAO DAO = mock(EmployeeDAO.class);
 
+    public static int DEFAULT_PAGE_SIZE = 1000;
+
     @ClassRule
     public static final ResourceTestRule resources = ResourceTestRule.builder()
-            .addResource(new EmployeeResource(DAO))
+            .addResource(new EmployeeResource(DAO, DEFAULT_PAGE_SIZE))
             .build();
+
 
     @After
     public void tearDown() throws Exception {
         reset(DAO);
+    }
+
+    @Test
+    public void findAllDefaultPageSize() throws Exception {
+        int pageSize = 20;
+        List<Employee> totalEmployees = new ArrayList<>();
+        for (int i = 0; i < 500; i++) {
+            totalEmployees.add(new Employee(1L, LocalDate.of(1947, Month.MARCH, 24), "Alan", "Sugar", "M", LocalDate.now()));
+        }
+        when(DAO.findAll(pageSize)).thenReturn(totalEmployees.subList(0, pageSize));
+
+        Response actual = resources.client().target("/employees")
+                .request()
+                .get();
+
+        verify(DAO).findAll(DEFAULT_PAGE_SIZE);
+        assertEquals(200, actual.getStatus());
+    }
+
+    @Test
+    public void findAllValidPageSize() throws Exception {
+        int pageSize = 20;
+        List<Employee> totalEmployees = new ArrayList<>();
+        for (int i = 0; i < 500; i++) {
+            totalEmployees.add(new Employee(1L, LocalDate.of(1947, Month.MARCH, 24), "Alan", "Sugar", "M", LocalDate.now()));
+        }
+        when(DAO.findAll(pageSize)).thenReturn(totalEmployees.subList(0, pageSize));
+
+        Response actual = resources.client().target(String.format("/employees?%s=%d", "pageSize", pageSize))
+                .request()
+                .get();
+
+        verify(DAO).findAll(pageSize);
+        assertEquals(200, actual.getStatus());
+    }
+
+    @Test
+    public void findAllInvalidPageSize() throws Exception {
+        int pageSize = EmployeeResource.MAX_PAGE_SIZE;
+
+        Response actual = resources.client().target(String.format("/employees?%s=%d", "pageSize", pageSize))
+                .request()
+                .get();
+
+        verify(DAO, never()).findAll(anyInt());
+        assertEquals(400, actual.getStatus());
     }
 
     @Test

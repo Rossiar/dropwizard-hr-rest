@@ -38,11 +38,11 @@ public class HumanResourcesApplication extends Application<HumanResourcesConfigu
     }
 
     @Override
-    public void run(final HumanResourcesConfiguration configuration,
+    public void run(final HumanResourcesConfiguration config,
                     final Environment environment) {
         // database
-        final DBI jdbi = new DBIFactory().build(environment, configuration.getDatabase(), "mysql");
-        environment.jersey().register(new EmployeeResource(jdbi.onDemand(EmployeeDAO.class)));
+        final DBI jdbi = new DBIFactory().build(environment, config.getDatabase(), "mysql");
+        environment.jersey().register(new EmployeeResource(jdbi.onDemand(EmployeeDAO.class), config.getPageSize()));
         environment.jersey().register(new DepartmentResource(jdbi.onDemand(DepartmentDAO.class)));
         final UserDAO userDAO = jdbi.onDemand(UserDAO.class);
         environment.jersey().register(new UserResource(userDAO));

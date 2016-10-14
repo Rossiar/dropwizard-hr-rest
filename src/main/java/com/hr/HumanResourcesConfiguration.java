@@ -12,11 +12,23 @@ import javax.validation.constraints.NotNull;
  */
 public class HumanResourcesConfiguration extends Configuration {
 
+    private int pageSize = 1000;
+
     @Valid
     @NotNull
     @JsonProperty("database")
     private DataSourceFactory database = new DataSourceFactory();
 
+
+    @JsonProperty("page-size")
+    public void setPageSize(int pageSize) {
+        this.pageSize = pageSize;
+    }
+
+    @JsonProperty("page-size")
+    public int getPageSize() {
+        return pageSize;
+    }
 
     public DataSourceFactory getDatabase() {
         return database;

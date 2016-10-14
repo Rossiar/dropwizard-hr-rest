@@ -9,6 +9,7 @@ import com.hr.db.EmployeeDAO;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import java.util.List;
 
 /**
@@ -18,19 +19,30 @@ import java.util.List;
 @Produces(MediaType.APPLICATION_JSON)
 public class EmployeeResource {
 
+    public static final int MAX_PAGE_SIZE = 100000;
+    private final int defaultPageSize;
+
     private EmployeeDAO dao;
 
-    private final int DEFAULT_PAGE_SIZE = 100;
-
-
-    public EmployeeResource(EmployeeDAO dao) {
+    public EmployeeResource(EmployeeDAO dao, int defaultPageSize) {
         this.dao = dao;
+        this.defaultPageSize = defaultPageSize;
     }
 
     @GET
     @Timed
-    public List<Employee> employeeList(@QueryParam("pageSize") int page_size) {
-        return dao.findAll(page_size != 0 ? page_size : DEFAULT_PAGE_SIZE);
+    public Response employeeList(@QueryParam("pageSize") int page_size) {
+        // takes care of pages that are too large
+        if (page_size >= MAX_PAGE_SIZE) {
+            return Response.status(Response.Status.BAD_REQUEST)
+                    .entity("Requested page size exceeds the limit of " + defaultPageSize)
+                    .build();
+        }
+
+        // takes care of pages that are too small or if no query parameter was supplied (just defaults to 0)
+        return Response.ok()
+                .entity(dao.findAll(page_size > 0 ? page_size : defaultPageSize))
+                .build();
     }
 
     @Path("/{id}")
