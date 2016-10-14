@@ -1,5 +1,7 @@
 # Human Resources Application
 
+[![Build Status](https://travis-ci.org/Rossiar/dropwizard-hr-rest.svg?branch=master)](https://travis-ci.org/Rossiar/dropwizard-hr-rest)
+
 Provides a REST interface to access the data contained [in this GitHub project](https://github.com/datacharmer/test_db).
 
 The current open endpoints are:
