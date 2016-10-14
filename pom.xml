@@ -10,8 +10,8 @@
     </prerequisites>
 
     <groupId>com.henderson</groupId>
-    <artifactId>simple-dropwizard</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <artifactId>dropwizard-hr-rest</artifactId>
+    <version>1.0</version>
     <packaging>jar</packaging>
 
     <name>Human Resources Application</name>
